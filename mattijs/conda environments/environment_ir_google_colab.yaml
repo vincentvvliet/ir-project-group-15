@@ -1,0 +1,13 @@
+name: ir_tct_colbert
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - cuda-version=12
+  - matplotlib
+  - scipy
+  - pandas
+  - spyder
+  - numpy
+  - pip
+

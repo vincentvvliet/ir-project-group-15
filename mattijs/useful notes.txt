@@ -1,0 +1,42 @@
+Changing ir_datasets and pyterrier save location:
+----------------------------------------------------------------------------------------------
+-go to 'edit the system environment variables' using the search bar
+- add two variables:
+	- IR_DATASETS_HOME = path_to_where_you_want_it_saved
+	- TERRIER_HOME = path_to_where_you_want_it_saved
+
+
+Getting python-terrier and fast-forward-indexes working on google colab:
+-----------------------------------------------------------------------------------------------
+First, you must install conda on google colab. This will ensure dependency stuff works:
+!pip install -q condacolab
+import condacolab
+condacolab.install()
+
+# Then install the environment by placing environment_ir_google_colab.yaml in your google colab folder thing and running this:
+!conda env update -n base -f /content/environment_ir_google_colab.yaml
+
+After which you can just place the following at the top of your code to initiate conda and activate your base env:
+!conda init
+!conda activate base
+
+Now we install the other required modules:
+%pip install python-terrier 
+%pip install fast-forward-indexes 
+
+You can now work with fast-forward-indexes and python-terrier together in google colab 
+(tested creating indexes using colbert)
+
+
+Getting the env set up for fast forward indexes
+--------------------------------------------------------------------------------------------
+Use the environment_ir.yaml file to make an environment with conda env create -f environment_ir.yaml (make sure you
+cd to the directory this file is in first). If some weird stuff happens later with this environment, change python=3.11
+to python=3.10.14.
+
+Then activate it and do:
+
+pip install python-terrier
+pip install fast-forward-indexes
+
+Boom. Done.
