@@ -1,0 +1,3 @@
+python-terrier
+sentence-transformers
+fast-forward-indexes
