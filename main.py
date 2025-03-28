@@ -23,9 +23,8 @@ def docs_iter():
         }
 
 
-# FF Score
 def setup_ff_index():
-    ff_index_path = BASE_DIR / "ff_indexes" / f"ffindex_cord19_{MODEL}.h5"
+    ff_index_path = BASE_DIR / "ff_indexes" / f"ffindex_cord19_{MODEL.lower()}.h5"
     if ff_index_path.exists():  # Use existing index
         ff_index = OnDiskIndex.load(
             ff_index_path,
@@ -77,6 +76,9 @@ def run_experiment(pipeline, topic='description'):
     # Write output to csv
     filename = f"results/results-{MODEL}.txt"
     experiment.to_csv(filename, sep='\t', encoding='utf-8', index=False, header=True)
+
+    # Print experiment
+    print(experiment)
 
     return experiment
 
