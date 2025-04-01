@@ -163,7 +163,7 @@ if tune:
 
 # %%Run final experiment on test set with best alpha
 
-ff_int = FFInterpolate(alpha=0.088)
+ff_int = FFInterpolate(alpha=0.2)
 
 pipeline = bm25 % 100 >> ff_score >> ff_int
 print(f"\nRunning experiment with alpha={ff_int.alpha}...")
