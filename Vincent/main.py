@@ -6,13 +6,15 @@ import pyterrier as pt
 from fast_forward.index import OnDiskIndex, Mode
 from fast_forward.util import Indexer
 from fast_forward.util.pyterrier import FFScore, FFInterpolate
+from fast_forward.encoder import TASBEncoder
 from pyterrier.measures import RR, nDCG, MAP
+import torch
 
 from MiniLM.encoder import MiniLMEncoder
 
 BASE_DIR = Path.cwd()
-MODEL = "MiniLM" # TODO: generalize
-
+MODEL = "TASB" # TODO: update
+DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # Helper function
 def docs_iter():
@@ -28,19 +30,19 @@ def setup_ff_index():
     if ff_index_path.exists():  # Use existing index
         ff_index = OnDiskIndex.load(
             ff_index_path,
-            query_encoder=MiniLMEncoder(), # TODO: generalize
+            query_encoder=TASBEncoder(device=DEVICE), # TODO: generalize
             mode=Mode.MAXP,
             # Super important that you use Mode.MAXP. Apparently this tells FFIndex to use all the text.
         )
     else:  # Create new one if it isn't already present
         ff_index = OnDiskIndex(
             ff_index_path,
-            query_encoder=MiniLMEncoder(), # TODO: generalize
+            query_encoder=TASBEncoder(device=DEVICE), # TODO: generalize
             mode=Mode.MAXP,
         )
 
         print(f"Indexing documents with {MODEL}...")
-        Indexer(ff_index, MiniLMEncoder(), batch_size=8).from_dicts(docs_iter()) # TODO: Generalize
+        Indexer(ff_index, TASBEncoder(), batch_size=8).from_dicts(docs_iter()) # TODO: Generalize
 
     print("Number of documents in index:", len(ff_index))
     ff_index = ff_index.to_memory()
@@ -61,19 +63,19 @@ def tune_hyperparameter_alpha(dataset, bm25, ff_score, ff_int):
 
 
 def run_experiment(pipeline, topic='description'):
-    # Apply MiniLM as a re-ranker
+    # Apply Vincent as a re-ranker
     print(f"\nRunning experiment with alpha={ff_int.alpha}... for topic: {topic}")
 
-    # Run experiment comparing BM25 and BM25 + MiniLM
+    # Run experiment comparing BM25 and BM25 + Vincent
     experiment = pt.Experiment(
         [bm25 % 100, pipeline % 100],
         dataset.get_topics(topic),
         dataset.get_qrels(),
         eval_metrics=[RR @ 10, nDCG @ 10, MAP @ 100],
-        names=["BM25", "BM25 + MiniLM"]
+        names=["BM25", "BM25 + Vincent"]
     )
 
-    # Write output to csv
+    # Write output to txt
     filename = f"results/results-{MODEL}.txt"
     experiment.to_csv(filename, sep='\t', encoding='utf-8', index=False, header=True)
 
