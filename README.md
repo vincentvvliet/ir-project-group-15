@@ -7,17 +7,19 @@ All implementations and experiments were originally created seperately, hence ea
 
 The *full_pipeline* directory holds the main file called *full_pipeline.py* which, when executed, should generate the index and run all experiments for all query types on CPU or GPU (```torch.cuda.is_available()```). 
 
+**Warning**: Fully executing full_pipeline.py will download 6GB worth of data and model weights.
+
 
 # Python 3.9 Dependencies
+To install all dependencies on a new venv run ```pip install -r requirements.txt``` at the root of the repository.
+
 Some packages are automatically installed since they are dependencies of others, but for the sake of clarity all key packages are listed.
 
 ## Machine Learning & AI
 - **torch** (2.6.0+cu124) - PyTorch with CUDA 12.4 support
 - **transformers** (4.50.3) - Hugging Face Transformers library
 - **sentence-transformers** (4.0.1) - For creating document/text embeddings
-- **huggingface-hub** (0.30.1) - Access to pre-trained models
 - **scikit-learn** (1.6.1) - General ML algorithms
-- **tensorboard** (2.19.0) - Visualization for machine learning experiments
 
 ## IR (Information Retrieval) Tools
 - **PyTerrier** (0.13.0) - IR platform (requires Java)
@@ -26,7 +28,6 @@ Some packages are automatically installed since they are dependencies of others,
 - **pyterrier-dr** (0.6.1) - Dense retrieval for PyTerrier
 - **ir_datasets** (0.5.10) - Standard IR datasets
 - **ir_measures** (0.3.7) - Evaluation metrics for IR
-- **ColBERT** (0.2.0) - Neural retrieval model
 
 ## Data Processing
 - **numpy** (1.26.3) - Numerical computing
