@@ -1,0 +1,26 @@
+name: ml_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10.14
+  - numpy
+  - matplotlib
+  - scikit-image
+  - scikit-learn
+  - scipy
+  #- tensorflow
+  #- pytorch
+  #- torchvision
+  #- torchaudio
+  #- keras
+  - pandas
+  - seaborn
+  - missingno
+  - upsetplot
+  - chardet
+  - openpyxl
+  - xgboost
+  - statsmodels
+  #- lime
+  - pip

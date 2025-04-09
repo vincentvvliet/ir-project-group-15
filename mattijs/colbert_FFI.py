@@ -12,7 +12,7 @@ from fast_forward.encoder import TCTColBERTQueryEncoder, TCTColBERTDocumentEncod
 from fast_forward.index import OnDiskIndex, Mode
 from fast_forward.util import Indexer
 from fast_forward.util.pyterrier import FFScore, FFInterpolate
-from pyterrier.measures import RR, nDCG, MAP
+
 import pandas as pd
 
 # Base directory for all model storage
@@ -52,13 +52,13 @@ if not(terrier_index_dir / 'data.properties').exists():
     index_ref = indexer.index(
         dataset.get_corpus_iter(), 
         fields=["title", "abstract"],  # Use actual available fields
-        meta=["docno", "title"]       # Store docno as primary key
+        meta=["docno", "text"]       # Store docno as primary key
     )
 else: 
     index_ref = pt.IndexFactory.of(str(terrier_index_dir))
 
 #%% BM25 baseline
-bm25 = pt.terrier.Retriever(index_ref, wmodel="BM25", metadata=["docno", "title"], controls={"bm25.b" : 0.75, "bm25.k_1": 0.75, "bm25.k_3": 0.75})
+bm25 = pt.terrier.Retriever(index_ref, wmodel="BM25", metadata=["docno", "text"], controls={"bm25.b" : 0.75, "bm25.k_1": 0.75, "bm25.k_3": 0.75})
 
 #%% Optionally perform hyperparameter tuning for bm25 before adding other method to pipeline
 # grid_search = pt.GridSearch(
@@ -73,14 +73,14 @@ bm25 = pt.terrier.Retriever(index_ref, wmodel="BM25", metadata=["docno", "title"
 #     verbose=True,
 # )
 
-# Evaluate baseline
-print("\nBM25 Baseline:")
-pt.Experiment(
-    [bm25],
-    dataset.get_topics('description'),
-    dataset.get_qrels(),
-    eval_metrics=[RR @ 10, nDCG @ 10, MAP @ 100],
-).to_csv(str(BASE_DIR / "results_bm25.csv"))
+# # Evaluate baseline
+# print("\nBM25 Baseline:")
+# pt.Experiment(
+#     [bm25],
+#     dataset.get_topics('description'),
+#     dataset.get_qrels(),
+#     eval_metrics=[RR @ 10, nDCG @ 10, MAP @ 100],
+# ).to_csv(str(BASE_DIR / "results_bm25.csv"))
 
 
 
@@ -162,6 +162,7 @@ if tune:
 
 
 # %%Run final experiment on test set with best alpha
+from pyterrier.measures import RR, nDCG, MAP, P, R
 
 ff_int = FFInterpolate(alpha=0.2)
 
@@ -171,8 +172,8 @@ experiment = pt.Experiment(
     [bm25 % 100, pipeline % 100],
     dataset.get_topics('description'),
     dataset.get_qrels(),
-    # eval_metrics=[RR @ 10, nDCG @ 10, MAP @ 100],
-    eval_metrics=["map", "recip_rank", "P.10", "ndcg_cut.10"],
+    eval_metrics=[RR @ 10, nDCG @ 10, MAP @ 100, 'mrt', R @ 10, R @ 25, R @ 50],
+    # eval_metrics=["map", "recip_rank", "P.10", "ndcg_cut.10"],
     names=["BM25", "BM25 >> TCT-ColBERT"],
 )
 experiment.to_csv(str(BASE_DIR / "final_results.csv"))

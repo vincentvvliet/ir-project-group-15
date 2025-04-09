@@ -40,3 +40,6 @@ pip install python-terrier
 pip install fast-forward-indexes
 
 Boom. Done.
+
+#%pip install -q python-terrier
+#%pip install -q --upgrade git+https://github.com/terrierteam/pyterrier_t5.git
