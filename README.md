@@ -1,4 +1,4 @@
-# Evaluating Common Methodologies with Varying Pre-trained Models for Reranking of Highly Specialised Datasets (Group 15)
+# Evaluating Common Methodologies with Varying Pre-trained Models for Reranking of TREC-COVID (Group 15)
 Using BM25 (baseline), TAS-B, SBERT, ColBERT, and T5 to gauge which model and methodology for neural network reranking is best for 'off-the-shelf' applications on specialised datasets such as TREC-COVID.
 
 
