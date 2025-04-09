@@ -85,4 +85,3 @@ class DatasetTextRetriever(pt.transformer.Transformer):
         if not text:
             text = doc.get('title', '')
         return text if text else ""
-
