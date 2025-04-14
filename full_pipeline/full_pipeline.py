@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import pyterrier as pt
+import torch
 
 if not pt.java.started():
     pt.java.init()
@@ -38,7 +39,6 @@ dataset = pt.get_dataset("irds:cord19/trec-covid")
 doc_fetcher = DatasetTextRetriever(dataset)
 
 index_loc = os.path.join(os.getcwd(), "index")
-os.makedirs(index_loc, exist_ok=True)
 
 def prepare_docs(corpus_iter):
     for doc in iter(corpus_iter):
@@ -56,6 +56,7 @@ def prepare_docs(corpus_iter):
 
 if not os.path.exists(index_loc):   
     print(f"Creating index at {index_loc}...")
+    os.makedirs(index_loc, exist_ok=True)
     indexer = pt.IterDictIndexer(index_loc, meta=['docno', 'text'])
     indexer.index(prepare_docs(dataset.get_corpus_iter()))
     print(f"Index created at {index_loc}")
@@ -68,7 +69,7 @@ colbert_factory = ColBERTFactory(
     colbert_model="http://www.dcs.gla.ac.uk/~craigm/colbert.dnn.zip",
     index_root=index_loc,
     index_name="trec_covid",
-    gpu=True,  # change this if, like me, you don't have an Nvidia GPU :)
+    gpu=torch.cuda.is_available(),  # change this if, like me, you don't have an Nvidia GPU :)
     )
 
 colbert_pipeline = (bm25 % 100) >> doc_fetcher >> colbert_factory.text_scorer()
